@@ -178,7 +178,8 @@ namespace Game {
             Vector3 localangularvelocity = transform.InverseTransformDirection(rigidBody.angularVelocity);
             // Debug.Log("localangularvelocity: " + localangularvelocity.y);
 
-            steeringWheel.transform.RotateAround(steeringWheel.transform.position, transform.up, Time.deltaTime * localangularvelocity.y * 150f);
+            steeringWheel.transform.Rotate(new Vector3(0f, (localangularvelocity.y/4f), 0f));
+            // steeringWheel.transform.RotateAround(steeringWheel.transform.position, transform.up, Time.deltaTime * localangularvelocity.y * 150f);
         }
     }
 }
