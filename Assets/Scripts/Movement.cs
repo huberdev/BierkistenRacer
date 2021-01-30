@@ -13,6 +13,12 @@ namespace Game {
         public EngineSounds engineSounds;
         public Text speedText;
 
+        // wheels
+        public GameObject wheel1;
+        public GameObject wheel2;
+        public GameObject wheel3;
+        public GameObject wheel4;
+
         private Rigidbody rigidBody;
         private float respawnTime = 0f;
         private float respawnTimeOnSide = 0f;
@@ -68,6 +74,9 @@ namespace Game {
 
             // set engine loop sound
             engineSounds.SetVolumeLoopSound(GetCurrentSpeed()/100f);
+
+            // animate wheels
+            AnimateWheels();
         }
 
         private void Update() {
@@ -134,11 +143,27 @@ namespace Game {
         public float GetCurrentSpeed() {
             currentSpeed = Mathf.RoundToInt(rigidBody.velocity.magnitude);
 
+            // check if car is driving forward or backward
+            var localVel = transform.InverseTransformDirection(rigidBody.velocity);
+            // Debug.Log("localVel: " + localVel.z);
+
             if (currentSpeed >= 0f) {
+
+                // car is driving backwards
+                if (localVel.z < 0)
+                    currentSpeed = currentSpeed * -1f;
+
                 return currentSpeed;
             } else {
                 return 0f;
             }
+        }
+
+        public void AnimateWheels() {
+            wheel1.transform.RotateAround(wheel1.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
+            wheel2.transform.RotateAround(wheel2.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
+            wheel3.transform.RotateAround(wheel3.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
+            wheel4.transform.RotateAround(wheel4.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
         }
     }
 }
