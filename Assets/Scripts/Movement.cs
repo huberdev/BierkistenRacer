@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game {
     public class Movement : MonoBehaviour
@@ -9,11 +10,14 @@ namespace Game {
         public float turnSpeed;
         public float gravity;
         public GameObject respawnText;
+        public EngineSounds engineSounds;
+        public Text speedText;
 
         private Rigidbody rigidBody;
         private float respawnTime = 0f;
         private float respawnTimeOnSide = 0f;
         private bool respawnAllowed = false;
+        private float currentSpeed = 0f;
 
         private Vector3 startPosition;
 
@@ -21,6 +25,9 @@ namespace Game {
         {
             rigidBody = GetComponent<Rigidbody>();
             startPosition = transform.position;
+
+            engineSounds.PlayStartSound();
+            engineSounds.PlayLoopSound();
         }
 
         void FixedUpdate()
@@ -55,6 +62,12 @@ namespace Game {
                 // higher gravity when in air
                 rigidBody.AddForce(Vector3.down * gravity * 30);
             }
+
+            // get speed
+            speedText.text = GetCurrentSpeed().ToString() + " km/h";
+
+            // set engine loop sound
+            engineSounds.SetVolumeLoopSound(GetCurrentSpeed()/100f);
         }
 
         private void Update() {
@@ -72,6 +85,9 @@ namespace Game {
                     respawnAllowed = false;
                     respawnTime = 0f;
                     respawnTimeOnSide = 0f;
+
+                    engineSounds.PlayStartSound();
+                    engineSounds.PlayLoopSound();
 
                     // reset transform
                     transform.rotation = Quaternion.identity;
@@ -106,9 +122,23 @@ namespace Game {
         }
 
         private void AllowRespawn() {
-            respawnAllowed = true;
-            respawnText.SetActive(true);
-            // Debug.Log("Allow Respawn");
+            if (!respawnAllowed) {
+                engineSounds.PlayStopSound();
+                engineSounds.StopLoopSound();
+                respawnAllowed = true;
+                respawnText.SetActive(true);
+                // Debug.Log("Allow Respawn");
+            }
+        }
+
+        public float GetCurrentSpeed() {
+            currentSpeed = Mathf.RoundToInt(rigidBody.velocity.magnitude);
+
+            if (currentSpeed >= 0f) {
+                return currentSpeed;
+            } else {
+                return 0f;
+            }
         }
     }
 }
