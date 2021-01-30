@@ -19,6 +19,9 @@ namespace Game {
         public GameObject wheel3;
         public GameObject wheel4;
 
+        // steering wheel
+        public GameObject steeringWheel;
+
         private Rigidbody rigidBody;
         private float respawnTime = 0f;
         private float respawnTimeOnSide = 0f;
@@ -102,6 +105,9 @@ namespace Game {
                     transform.rotation = Quaternion.identity;
                     transform.position = startPosition;
             }
+
+            // animate steering wheel
+            AnimateSteeringWheel();
         }
 
         private void CheckVehicleUpsideDown() {
@@ -164,6 +170,15 @@ namespace Game {
             wheel2.transform.RotateAround(wheel2.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
             wheel3.transform.RotateAround(wheel3.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
             wheel4.transform.RotateAround(wheel4.transform.position, transform.right, Time.deltaTime * GetCurrentSpeed() * 40f);
+        }
+
+        public void AnimateSteeringWheel() {
+
+            // get angular velocity
+            Vector3 localangularvelocity = transform.InverseTransformDirection(rigidBody.angularVelocity);
+            // Debug.Log("localangularvelocity: " + localangularvelocity.y);
+
+            steeringWheel.transform.RotateAround(steeringWheel.transform.position, transform.up, Time.deltaTime * localangularvelocity.y * 150f);
         }
     }
 }
